@@ -38,7 +38,10 @@ class MainRouter: MainRouterProtocol {
     func loginSuccess() {
         let taskListViewController = TaskListViewController()
         let interactor = TaskListInteractor()
-        let presenter = TaskListPresenter(view: taskListViewController as TaskListViewProtocol, interactor: interactor, router: self)
+        let presenter = TaskListPresenter(view: taskListViewController, 
+                                        interactor: interactor, 
+                                        router: self)
+        
         taskListViewController.presenter = presenter
         interactor.presenter = presenter
         

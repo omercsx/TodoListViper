@@ -7,7 +7,7 @@
 import UIKit
 
 class TaskListViewController: UIViewController {
-    weak var presenter: TaskListPresenterProtocol?
+    var presenter: TaskListPresenterProtocol?
     
     let tableView = UITableView()
     
@@ -15,12 +15,14 @@ class TaskListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("TaskList ViewDidLoad called")
         tableView.dataSource = self
         view.backgroundColor = .white
-        presenter?.view = self
+
         title = "Task List"
         
         presenter?.fetchTaskList()
+        print("Fetch task list called")
         setupTableView()
         setupNavigationItems()
     }
@@ -54,7 +56,7 @@ extension TaskListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let task = taskList[indexPath.row]
         cell.textLabel?.text = task.title
         cell.accessoryType = task.isCompleted ? .checkmark : .none
@@ -64,8 +66,11 @@ extension TaskListViewController: UITableViewDataSource {
 
 extension TaskListViewController: TaskListViewProtocol {
     func showTaskList(_ taskList: [Task]) {
+        print("ShowTaskList called with \(taskList.count) tasks")
         self.taskList = taskList
-        tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     @objc func logoutButtonTapped() {
