@@ -10,7 +10,13 @@ import Foundation
 class TaskListPresenter: TaskListPresenterProtocol {
     weak var view: TaskListViewProtocol?
     var interactor: TaskListInteractorInputProtocol?
-    var router: TaskListRouterProtocol?
+    var router: MainRouterProtocol?
+    
+    init(view: TaskListViewProtocol? = nil, interactor: TaskListInteractorInputProtocol? = nil, router: MainRouterProtocol? = nil) {
+        self.view = view
+        self.interactor = interactor
+        self.router = router
+    }
     
     func fetchTaskList() {
         interactor?.fetchTaskList()
@@ -31,7 +37,7 @@ extension TaskListPresenter: TaskListInteractorOutputProtocol {
     }
     
     func didLogout() {
-        router?.navigateToLogin()
+        router?.logout()
     }
     
     func didFetchTaskDetail(_ task: Task) {

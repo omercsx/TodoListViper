@@ -8,7 +8,7 @@
 protocol TaskListPresenterProtocol: AnyObject {
     var view: TaskListViewProtocol? { get set }
     var interactor: TaskListInteractorInputProtocol? { get set }
-    var router: TaskListRouterProtocol? { get set }
+    var router: MainRouterProtocol? { get set }
     
     func fetchTaskList()
     func fetchTaskDetail(task: Task)

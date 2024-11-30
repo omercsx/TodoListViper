@@ -18,6 +18,7 @@ class LoginInteractor: LoginInteractorInputProtocol {
     weak var presenter: LoginInteractorOutputProtocol?
     
     func login(username: String, password: String) {
+        print("Interactor: Login called")
         let loggedUser = User(username: username, password: password)
         
         let isValidUser = users.contains { user in

@@ -17,14 +17,12 @@ class TaskListViewController: UIViewController {
         super.viewDidLoad()
         tableView.dataSource = self
         view.backgroundColor = .white
-        
+        presenter?.view = self
         title = "Task List"
         
-        
+        presenter?.fetchTaskList()
         setupTableView()
         setupNavigationItems()
-        
-        presenter?.fetchTaskList()
     }
     
     func setupNavigationItems() {

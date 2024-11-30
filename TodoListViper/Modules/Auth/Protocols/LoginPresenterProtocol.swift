@@ -9,9 +9,8 @@ import Foundation
 
 protocol LoginPresenterProtocol: AnyObject {
     var view: LoginViewController?  { get set }
-    var router: LoginRouterProtocol? { get set }
+    var router: MainRouterProtocol? { get set }
     var interactor: LoginInteractorInputProtocol? { get set }
-    
     
     func login(username: String, password: String)
 }
