@@ -10,9 +10,25 @@ import UIKit
 class LoginRouter: LoginRouterProtocol {
     var presenter: LoginPresenterProtocol?
     
-    func navigateToTaskList() {
-        let taskListViewController = TaskListViewController()
+    static func createModule() -> LoginViewController {
+        let view = LoginViewController()
+        let presenter = LoginPresenter()
+        let interactor = LoginInteractor()
+        let router = LoginRouter()
         
-        presenter?.view?.navigationController?.pushViewController(taskListViewController, animated: true)
+        view.presenter = presenter
+        presenter.view = view
+        presenter.interactor = interactor
+        presenter.router = router
+        interactor.presenter = presenter
+        router.presenter = presenter
+        
+        return view
+    }
+    
+    func navigateToTaskList() {
+        let taskListView = TaskListRouter.createModule()
+        
+        presenter?.view?.navigationController?.pushViewController(taskListView, animated: true)
     }
 }

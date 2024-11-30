@@ -27,7 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         interactor.presenter = presenter
         router.presenter = presenter
 
-        let navigationController = UINavigationController(rootViewController: view)
+        let isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+        
+        let navigationController = isLoggedIn ?
+            UINavigationController(rootViewController: TaskListRouter.createModule()) :
+            UINavigationController(rootViewController: view)
         
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()

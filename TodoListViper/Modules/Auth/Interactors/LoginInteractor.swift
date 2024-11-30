@@ -25,6 +25,7 @@ class LoginInteractor: LoginInteractorInputProtocol {
         }
         
         if isValidUser {
+            UserDefaults.standard.set(true, forKey: "isLoggedIn")
             presenter?.loginSuccess()
         } else {
             presenter?.loginFailure(message: "Invalid username or password")
