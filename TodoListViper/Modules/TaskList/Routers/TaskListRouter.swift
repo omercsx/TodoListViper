@@ -29,8 +29,7 @@ class TaskListRouter: TaskListRouterProtocol {
     func navigateToLogin() {
         print("Navigating to login screen")
         // navigate to login screen
-        let loginView = LoginRouter.createModule()
-        let navigationController = UINavigationController(rootViewController: loginView)
+        let navigationController = UINavigationController(rootViewController: LoginRouter.createModule())
         UIApplication.shared.windows.first?.rootViewController = navigationController
     }
     
