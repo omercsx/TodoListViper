@@ -37,7 +37,7 @@ class LoginViewController: UIViewController {
         button.setTitle("Login", for: .normal)
         button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         
-        button.backgroundColor = .blue
+        button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 10
 
@@ -77,7 +77,7 @@ class LoginViewController: UIViewController {
     
     @objc func loginButtonTapped() {
         if let username = usernameTextField.text, let password = passwordTextField.text {
-            presenter?.login(username: username, password: password)
+            presenter?.login(username: username.lowercased(), password: password)
         } else {
             showError(message: "Please enter username and password")
         }

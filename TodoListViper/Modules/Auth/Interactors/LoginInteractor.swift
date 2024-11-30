@@ -10,7 +10,7 @@ import Foundation
 class LoginInteractor: LoginInteractorInputProtocol {
     
     let users = [
-        User(username: "User1", password: "123123"),
+        User(username: "user1", password: "123123"),
         User(username: "user2", password: "123123"),
         User(username: "user3", password: "123123")
     ]
