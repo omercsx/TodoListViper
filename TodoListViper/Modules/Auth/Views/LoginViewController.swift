@@ -77,7 +77,6 @@ class LoginViewController: UIViewController {
     
     @objc func loginButtonTapped() {
         if let username = usernameTextField.text, let password = passwordTextField.text {
-            print("Button tapped")
             presenter?.login(username: username.lowercased(), password: password)
         } else {
             showError(message: "Please enter username and password")
