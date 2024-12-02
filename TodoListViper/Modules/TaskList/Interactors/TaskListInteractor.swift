@@ -7,6 +7,12 @@
 
 import Foundation
 
+protocol TaskListInteractorInputProtocol: AnyObject {
+    func fetchTaskList()
+    func logout()
+    func fetchTaskDetail(task: Task)
+}
+
 class TaskListInteractor: TaskListInteractorInputProtocol {
     weak var presenter: TaskListInteractorOutputProtocol?
     
