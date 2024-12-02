@@ -7,22 +7,34 @@
 import UIKit
 
 class TaskListViewController: UIViewController {
-    var presenter: TaskListPresenterProtocol?
     
     let tableView = UITableView()
     
     var taskList: [Task] = []
     
+    let presenter: TaskListPresenterProtocol
+    
+    init(presenter: TaskListPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+        
+        self.presenter.delegate = self
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("TaskList ViewDidLoad called")
         tableView.dataSource = self
+        tableView.delegate = self
+
         view.backgroundColor = .white
 
         title = "Task List"
-        
-        presenter?.fetchTaskList()
-        print("Fetch task list called")
+        presenter.fetchTaskList()
         setupTableView()
         setupNavigationItems()
     }
@@ -48,6 +60,18 @@ class TaskListViewController: UIViewController {
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
+    
+    func showTaskList(_ taskList: [Task]) {
+        print("ShowTaskList called with \(taskList.count) tasks")
+        self.taskList = taskList
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    @objc func logoutButtonTapped() {
+        presenter.logout()
+    }
 }
 
 extension TaskListViewController: UITableViewDataSource {
@@ -64,16 +88,15 @@ extension TaskListViewController: UITableViewDataSource {
     }
 }
 
-extension TaskListViewController: TaskListViewProtocol {
-    func showTaskList(_ taskList: [Task]) {
-        print("ShowTaskList called with \(taskList.count) tasks")
-        self.taskList = taskList
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+extension TaskListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presenter.fetchTaskDetail(taskId: indexPath.row)
     }
-    
-    @objc func logoutButtonTapped() {
-        presenter?.logout()
+}
+
+extension TaskListViewController: TaskListPresenterDelegate {
+    func didFetchTaskList(_ taskList: [Task]) {
+        self.taskList = taskList
+        tableView.reloadData()
     }
 }

@@ -11,6 +11,7 @@ protocol MainRouterProtocol {
     func start()
     func loginSuccess()
     func logout()
+    func goToDetail()
 }
 
 class MainRouter: MainRouterProtocol {
@@ -32,19 +33,20 @@ class MainRouter: MainRouterProtocol {
     }
     
     func loginSuccess() {
-        let taskListViewController = TaskListViewController()
-        let interactor = TaskListInteractor()
-        let presenter = TaskListPresenter(view: taskListViewController, 
-                                        interactor: interactor, 
-                                        router: self)
+        let presenter = TaskListPresenter(router: self)
+        let taskListVC = presenter.getViewController()
         
-        taskListViewController.presenter = presenter
-        interactor.presenter = presenter
-        
-        navigationController.pushViewController(taskListViewController, animated: true)
+        navigationController.pushViewController(taskListVC, animated: true)
     }
     
     func logout() {
         navigationController.popViewController(animated: true)
+    }
+    
+    func goToDetail() {
+//        let detailViewController = TaskDetailViewController(task: task)
+//        let presenter = TaskDetailPresenter(router: self)
+        
+        navigationController.pushViewController(TaskDetailViewController(), animated: true)
     }
 }

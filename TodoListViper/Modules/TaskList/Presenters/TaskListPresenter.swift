@@ -5,43 +5,50 @@
 //  Created by Omer Cagri Sayir on 30.11.2024.
 //
 
-import Foundation
+import UIKit
+
+protocol TaskListPresenterDelegate: AnyObject {
+    func didFetchTaskList(_ taskList: [Task])
+}
+
+protocol TaskListPresenterProtocol: AnyObject {
+    var delegate: TaskListPresenterDelegate? { get set }
+    var interactor: TaskListInteractorInputProtocol { get set }
+    var router: MainRouterProtocol? { get set }
+    
+    func fetchTaskList()
+    func fetchTaskDetail(taskId: Int)
+    func logout()
+}
 
 class TaskListPresenter: TaskListPresenterProtocol {
-    weak var view: TaskListViewProtocol?
-    var interactor: TaskListInteractorInputProtocol?
+    
+    weak var delegate: TaskListPresenterDelegate?
+    var interactor: TaskListInteractorInputProtocol
     var router: MainRouterProtocol?
     
-    init(view: TaskListViewProtocol? = nil, interactor: TaskListInteractorInputProtocol? = nil, router: MainRouterProtocol? = nil) {
-        self.view = view
-        self.interactor = interactor
+    init(router: MainRouterProtocol? = nil) {
+        self.interactor = TaskListInteractor()
         self.router = router
     }
     
     func fetchTaskList() {
-        interactor?.fetchTaskList()
+        let tasklist = interactor.fetchTaskList()
+        delegate?.didFetchTaskList(tasklist)
     }
     
     func logout() {
-        interactor?.logout()
-    }
-    
-    func fetchTaskDetail(task: Task) {
-        print("Task detail fetched: \(task.title)")
-    }
-}
-
-extension TaskListPresenter: TaskListInteractorOutputProtocol {
-    func didFetchTaskList(_ taskList: [Task]) {
-        view?.showTaskList(taskList)
-    }
-    
-    func didLogout() {
         router?.logout()
     }
     
-    func didFetchTaskDetail(_ task: Task) {
-//        view?.fetchTaskDetail(task: task)
-        print("Task detail fetched: \(task.title)")
+    func fetchTaskDetail(taskId: Int) {
+        print("Task detail fetched: \(taskId)")
+        router?.goToDetail()
+    }
+    
+    // MARK: - Presenter Managing
+    func getViewController() -> UIViewController {
+        let viewController = TaskListViewController(presenter: self)
+        return viewController
     }
 }

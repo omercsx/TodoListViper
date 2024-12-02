@@ -35,7 +35,6 @@ class LoginPresenter: LoginPresenterProtocol, PresenterManaging {
     }
     
     func login(username: String, password: String) {
-        print("Presenter is logging in...")
         interactor?.login(username: username, password: password) {
             success, error in
             if let error {
