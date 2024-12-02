@@ -42,8 +42,8 @@ class TaskListPresenter: TaskListPresenterProtocol {
     }
     
     func fetchTaskDetail(taskId: Int) {
-        print("Task detail fetched: \(taskId)")
-        router?.goToDetail()
+        let task = interactor.fetchTask(withId: taskId)
+        router?.goToDetail(of: task)
     }
     
     // MARK: - Presenter Managing

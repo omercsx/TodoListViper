@@ -9,6 +9,7 @@ import Foundation
 
 protocol TaskListInteractorInputProtocol: AnyObject {
     func fetchTaskList() -> [Task]
+    func fetchTask(withId id: Int) -> Task
 }
 
 class TaskListInteractor: TaskListInteractorInputProtocol {
@@ -20,5 +21,9 @@ class TaskListInteractor: TaskListInteractorInputProtocol {
     
     func fetchTaskList() -> [Task] {
         return taskList
+    }
+    
+    func fetchTask(withId id: Int) -> Task {
+        return taskList[id]
     }
 }
