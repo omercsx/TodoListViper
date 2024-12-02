@@ -20,7 +20,6 @@ class LoginInteractor: LoginInteractorInputProtocol {
     ]
     
     func login(username: String, password: String, completion: (Bool, String?) -> Void) {
-        print("Interactor: Login called")
         let loggedUser = User(username: username, password: password)
         
         let isValidUser = users.contains { user in
@@ -28,6 +27,7 @@ class LoginInteractor: LoginInteractorInputProtocol {
         }
         
         if isValidUser {
+            UserDefaults.standard.set(true, forKey: "isLoggedIn")
             completion(true, nil)
         } else {
             completion(false, "Invalid username or password")

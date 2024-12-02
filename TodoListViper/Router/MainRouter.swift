@@ -26,10 +26,14 @@ class MainRouter: MainRouterProtocol {
     }
     
     func start() {
-        let presenter = LoginPresenter(router: self)
+        if UserDefaults.standard.bool(forKey: "isLoggedIn") {
+            loginSuccess()
+        } else {
+            let presenter = LoginPresenter(router: self)
 
-        let vc = presenter.getViewController()
-        navigationController.setViewControllers([vc], animated: false)
+            let vc = presenter.getViewController()
+            navigationController.setViewControllers([vc], animated: false)
+        }
     }
     
     func loginSuccess() {
@@ -40,7 +44,8 @@ class MainRouter: MainRouterProtocol {
     }
     
     func logout() {
-        navigationController.popViewController(animated: true)
+        UserDefaults.standard.removeObject(forKey: "isLoggedIn")
+        start()
     }
     
     func goToDetail(of task: Task) {

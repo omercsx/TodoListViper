@@ -30,10 +30,6 @@ class LoginPresenter: LoginPresenterProtocol, PresenterManaging {
         self.interactor = LoginInteractor()
     }
     
-    func checkLogin() {
-        
-    }
-    
     func login(username: String, password: String) {
         interactor?.login(username: username, password: password) {
             success, error in
