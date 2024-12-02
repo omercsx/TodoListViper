@@ -91,14 +91,12 @@ class LoginViewController: UIViewController {
     
     @objc func loginButtonTapped() {
         if let username = usernameTextField.text, let password = passwordTextField.text {
-            presenter?.login(username: username.lowercased(), password: password)
+            presenter.login(username: username.lowercased(), password: password)
         } else {
             showError(message: "Please enter username and password")
         }
     }
-}
-
-extension LoginViewController: LoginViewProtocol {
+    
     func showError(message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
