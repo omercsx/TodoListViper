@@ -8,7 +8,21 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-    var presenter: LoginPresenterProtocol?
+    
+    let presenter: LoginPresenterProtocol
+    
+    
+    init(presenter: LoginPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+        
+        self.presenter.delegate = self
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     let button = UIButton()
     
@@ -92,3 +106,8 @@ extension LoginViewController: LoginViewProtocol {
     }
 }
 
+extension LoginViewController: LoginPresenterDelegate {
+    func loginFailure(message: String) {
+        showError(message: message)
+    }
+}

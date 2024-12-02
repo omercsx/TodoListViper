@@ -26,10 +26,6 @@ class MainRouter: MainRouterProtocol {
     
     func start() {
         let presenter = LoginPresenter(router: self)
-        let interactor = LoginInteractor()
-
-        presenter.interactor = interactor
-        interactor.presenter = presenter
 
         let vc = presenter.getViewController()
         navigationController.setViewControllers([vc], animated: false)

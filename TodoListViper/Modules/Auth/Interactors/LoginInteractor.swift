@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol LoginInteractorInputProtocol: AnyObject {
+    func login(username: String, password: String, completion: (Bool, String?) -> Void)
+}
+
 class LoginInteractor: LoginInteractorInputProtocol {
     
     let users = [
@@ -15,9 +19,7 @@ class LoginInteractor: LoginInteractorInputProtocol {
         User(username: "user3", password: "123123")
     ]
     
-    weak var presenter: LoginInteractorOutputProtocol?
-    
-    func login(username: String, password: String) {
+    func login(username: String, password: String, completion: (Bool, String?) -> Void) {
         print("Interactor: Login called")
         let loggedUser = User(username: username, password: password)
         
@@ -26,10 +28,9 @@ class LoginInteractor: LoginInteractorInputProtocol {
         }
         
         if isValidUser {
-            UserDefaults.standard.set(true, forKey: "isLoggedIn")
-            presenter?.loginSuccess()
+            completion(true, nil)
         } else {
-            presenter?.loginFailure(message: "Invalid username or password")
+            completion(false, "Invalid username or password")
         }
     }
 }
