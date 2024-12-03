@@ -8,7 +8,17 @@ import UIKit
 
 class TaskListViewController: UIViewController {
     
-    let tableView = UITableView()
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 12
+        layout.minimumInteritemSpacing = 12
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .systemBackground
+        return collectionView
+    }()
     
     var taskList: [Task] = []
     
@@ -28,14 +38,14 @@ class TaskListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("TaskList ViewDidLoad called")
-        tableView.dataSource = self
-        tableView.delegate = self
-
-        view.backgroundColor = .white
-
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
+        view.backgroundColor = .systemBackground
         title = "Task List"
         presenter.fetchTaskList()
-        setupTableView()
+        setupCollectionView()
         setupNavigationItems()
     }
     
@@ -47,25 +57,24 @@ class TaskListViewController: UIViewController {
         navigationItem.rightBarButtonItem?.tintColor = .systemBlue
     }
     
-    func setupTableView() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+    func setupCollectionView() {
+        view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.identifier)
     }
     
     func showTaskList(_ taskList: [Task]) {
         print("ShowTaskList called with \(taskList.count) tasks")
         self.taskList = taskList
         DispatchQueue.main.async {
-            self.tableView.reloadData()
+            self.collectionView.reloadData()
         }
     }
     
@@ -74,22 +83,28 @@ class TaskListViewController: UIViewController {
     }
 }
 
-extension TaskListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension TaskListViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return taskList.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.identifier, for: indexPath) as? TaskCell else {
+            return UICollectionViewCell()
+        }
         let task = taskList[indexPath.row]
-        cell.textLabel?.text = task.title
-        cell.accessoryType = task.isCompleted ? .checkmark : .none
+        cell.configure(with: task)
         return cell
     }
 }
 
-extension TaskListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+extension TaskListViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.bounds.width - 32 // Accounting for left and right insets
+        return CGSize(width: width, height: 60)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         presenter.fetchTaskDetail(taskId: indexPath.row)
     }
 }
@@ -97,6 +112,6 @@ extension TaskListViewController: UITableViewDelegate {
 extension TaskListViewController: TaskListPresenterDelegate {
     func didFetchTaskList(_ taskList: [Task]) {
         self.taskList = taskList
-        tableView.reloadData()
+        collectionView.reloadData()
     }
 }
