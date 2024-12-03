@@ -11,7 +11,6 @@ class LoginViewController: UIViewController {
     
     let presenter: LoginPresenterProtocol
     
-    
     init(presenter: LoginPresenterProtocol) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
@@ -25,6 +24,8 @@ class LoginViewController: UIViewController {
     
     
     let button = UIButton()
+    let imageView = UIImageView()
+    let nameOfAppLabel = UILabel()
     
     let usernameTextField = UITextField()
     let passwordTextField = UITextField()
@@ -39,7 +40,13 @@ class LoginViewController: UIViewController {
     }
     
     func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
+        
+        imageView.image = UIImage(named: "Login-page")
+        imageView.contentMode = .scaleAspectFill
+        
+        nameOfAppLabel.text = "VIPER Todo List"
+        nameOfAppLabel.font = .systemFont(ofSize: 32, weight: .bold)
         
         usernameLabel.text = "Username"
         passwordLabel.text = "Password"
@@ -51,16 +58,20 @@ class LoginViewController: UIViewController {
         button.setTitle("Login", for: .normal)
         button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = .black
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 10
 
+        view.addSubview(nameOfAppLabel)
+        view.addSubview(imageView)
         view.addSubview(button)
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
         view.addSubview(usernameLabel)
         view.addSubview(passwordLabel)
         
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        nameOfAppLabel.translatesAutoresizingMaskIntoConstraints = false
         button.translatesAutoresizingMaskIntoConstraints = false
         usernameTextField.translatesAutoresizingMaskIntoConstraints = false
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -68,7 +79,13 @@ class LoginViewController: UIViewController {
         passwordLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            usernameLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            nameOfAppLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
+            nameOfAppLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            usernameLabel.topAnchor.constraint(equalTo: nameOfAppLabel.bottomAnchor, constant: 100),
             usernameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
             usernameTextField.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 10),
