@@ -42,7 +42,7 @@ class LoginViewController: UIViewController {
     func setupUI() {
         view.backgroundColor = .systemBackground
         
-        imageView.image = UIImage(named: "Login-page")
+        imageView.image = UIImage(named: "Welcome-page")
         imageView.contentMode = .scaleAspectFill
         
         nameOfAppLabel.text = "VIPER Todo List"
