@@ -90,12 +90,19 @@ class TaskListViewController: UIViewController {
         alert.addTextField { textField in
             textField.placeholder = "Task Title"
         }
+        
+        alert.addTextField { textField in
+            textField.placeholder = "Task Description"
+        }
+        
         alert.addAction(
             UIAlertAction(
                 title: "Add", style: .default,
                 handler: { _ in
-                    if let title = alert.textFields?.first?.text {
-                        let newTask = Task(title: title, description: "New Todo", isCompleted: false)
+                    if let title = alert.textFields?.first?.text,
+                      let desc = alert.textFields?.last?.text {
+                        
+                        let newTask = Task(title: title, description: desc, isCompleted: false)
                         self.taskList.append(newTask)
                         self.presenter.addTask(newTask)
                         self.collectionView.reloadData()
