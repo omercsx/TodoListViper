@@ -95,7 +95,10 @@ class TaskListViewController: UIViewController {
                 title: "Add", style: .default,
                 handler: { _ in
                     if let title = alert.textFields?.first?.text {
-                        print("Task Title: \(title)")
+                        let newTask = Task(title: title, description: "New Todo", isCompleted: false)
+                        self.taskList.append(newTask)
+                        self.presenter.addTask(newTask)
+                        self.collectionView.reloadData()
                     }
                 }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

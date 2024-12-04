@@ -18,6 +18,7 @@ protocol TaskListPresenterProtocol: AnyObject {
     
     func fetchTaskList()
     func fetchTaskDetail(taskId: Int)
+    func addTask(_ task: Task)
     func logout()
 }
 
@@ -44,6 +45,10 @@ class TaskListPresenter: TaskListPresenterProtocol {
     func fetchTaskDetail(taskId: Int) {
         let task = interactor.fetchTask(withId: taskId)
         router?.goToDetail(of: task)
+    }
+    
+    func addTask(_ task: Task) {
+        interactor.addTask(task)
     }
     
     // MARK: - Presenter Managing
