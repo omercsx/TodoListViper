@@ -102,7 +102,7 @@ class TaskListViewController: UIViewController {
                     if let title = alert.textFields?.first?.text,
                       let desc = alert.textFields?.last?.text {
                         
-                        let newTask = Task(title: title, description: desc, isCompleted: false)
+                        let newTask = Task(title: title, description: desc, isCompleted: false, completionDate: nil)
                         self.taskList.append(newTask)
                         self.presenter.addTask(newTask)
                         self.collectionView.reloadData()
@@ -162,11 +162,12 @@ extension TaskListViewController: UICollectionViewDataSource {
 
 extension TaskListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
-        _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         let width = collectionView.bounds.width - 32  // Accounting for left and right insets
-        return CGSize(width: width, height: 60)
+        return CGSize(width: width, height: 80)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

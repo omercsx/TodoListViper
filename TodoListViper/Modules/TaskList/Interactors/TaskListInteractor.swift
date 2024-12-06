@@ -16,7 +16,7 @@ protocol TaskListInteractorInputProtocol: AnyObject {
 class TaskListInteractor: TaskListInteractorInputProtocol {
     var taskList = [
         Task(title: "Task 1", description: "Description 1", isCompleted: false),
-        Task(title: "Task 2", description: "Description 2", isCompleted: true),
+        Task(title: "Task 2", description: "Description 2", isCompleted: true, completionDate: .now),
         Task(title: "Task 3", description: "Description 3", isCompleted: false)
     ]
     
