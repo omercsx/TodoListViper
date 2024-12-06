@@ -8,12 +8,12 @@ import UIKit
 
 class TaskListViewController: UIViewController {
 
-    let imageView = UIImageView(image: UIImage(named: "Login-page"))
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 12
         layout.minimumInteritemSpacing = 12
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 200)
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -45,22 +45,8 @@ class TaskListViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         presenter.fetchTaskList()
-        setupImage()
         setupCollectionView()
         setupNavigationItems()
-    }
-
-    func setupImage() {
-        imageView.contentMode = .scaleAspectFill
-        view.addSubview(imageView)
-
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: view.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 200),
-        ])
     }
 
     func setupNavigationItems() {
@@ -116,13 +102,18 @@ class TaskListViewController: UIViewController {
         view.addSubview(collectionView)
 
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
 
         collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.identifier)
+        collectionView.register(
+            TaskListHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: TaskListHeaderView.identifier
+        )
     }
 
     func showTaskList(_ taskList: [Task]) {
@@ -136,6 +127,8 @@ class TaskListViewController: UIViewController {
     @objc func logoutButtonTapped() {
         presenter.logout()
     }
+
+    
 }
 
 extension TaskListViewController: UICollectionViewDataSource {
@@ -170,6 +163,14 @@ extension TaskListViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: 80)
     }
 
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskListHeaderView.identifier, for: indexPath) as! TaskListHeaderView
+            return header
+        }
+        return UICollectionReusableView()
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         presenter.fetchTaskDetail(taskId: indexPath.row)
     }
