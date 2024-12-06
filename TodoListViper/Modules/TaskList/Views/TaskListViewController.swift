@@ -7,7 +7,6 @@
 import UIKit
 
 class TaskListViewController: UIViewController {
-
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 12
@@ -57,7 +56,7 @@ class TaskListViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
 
         navigationController?.navigationBar.largeTitleTextAttributes = [
-            .foregroundColor: UIColor.white
+            .foregroundColor: UIColor.white,
         ]
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -76,18 +75,17 @@ class TaskListViewController: UIViewController {
         alert.addTextField { textField in
             textField.placeholder = "Task Title"
         }
-        
+
         alert.addTextField { textField in
             textField.placeholder = "Task Description"
         }
-        
+
         alert.addAction(
             UIAlertAction(
                 title: "Add", style: .default,
                 handler: { _ in
                     if let title = alert.textFields?.first?.text,
-                      let desc = alert.textFields?.last?.text {
-                        
+                       let desc = alert.textFields?.last?.text {
                         let newTask = Task(title: title, description: desc, isCompleted: false, completionDate: nil)
                         self.taskList.append(newTask)
                         self.presenter.addTask(newTask)
@@ -127,20 +125,16 @@ class TaskListViewController: UIViewController {
     @objc func logoutButtonTapped() {
         presenter.logout()
     }
-
-    
 }
 
 extension TaskListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int)
-        -> Int
-    {
+        -> Int {
         return taskList.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)
-        -> UICollectionViewCell
-    {
+        -> UICollectionViewCell {
         guard
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: TaskCell.identifier, for: indexPath) as? TaskCell
@@ -159,8 +153,14 @@ extension TaskListViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let width = collectionView.bounds.width - 32  // Accounting for left and right insets
-        return CGSize(width: width, height: 80)
+        let width = collectionView.bounds.width - 32 // Accounting for left and right insets
+        // Dynamic sizing
+        let task = taskList[indexPath.item]
+
+        if task.isCompleted {
+            return CGSize(width: width, height: 80)
+        }
+        return CGSize(width: width, height: 60)
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -170,7 +170,7 @@ extension TaskListViewController: UICollectionViewDelegateFlowLayout {
         }
         return UICollectionReusableView()
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         presenter.fetchTaskDetail(taskId: indexPath.row)
     }
