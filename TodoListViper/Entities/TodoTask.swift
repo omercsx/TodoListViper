@@ -7,7 +7,10 @@
 
 import Foundation
 
-struct Task {
+//Never name a type similar to native types
+//"Task" is already a type in iOS
+struct TodoTask: Storable {
+    var id: String
     let title: String
     let description: String
     let isCompleted: Bool

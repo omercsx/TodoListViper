@@ -11,7 +11,7 @@ protocol MainRouterProtocol {
     func start()
     func loginSuccess()
     func logout()
-    func goToDetail(of task: Task)
+    func goToDetail(of task: TodoTask)
 }
 
 class MainRouter: MainRouterProtocol {
@@ -48,7 +48,7 @@ class MainRouter: MainRouterProtocol {
         start()
     }
     
-    func goToDetail(of task: Task) {
+    func goToDetail(of task: TodoTask) {
         navigationController.pushViewController(TaskDetailViewController(task: task), animated: true)
     }
 }

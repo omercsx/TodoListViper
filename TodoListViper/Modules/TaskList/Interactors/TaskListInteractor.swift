@@ -8,27 +8,42 @@
 import Foundation
 
 protocol TaskListInteractorInputProtocol: AnyObject {
-    func fetchTaskList() -> [Task]
-    func fetchTask(withId id: Int) -> Task
-    func addTask(_ task: Task)
+    func fetchTaskList(completion: @escaping ([TodoTask]?, String?) -> Void)
+    func fetchTask(withId id: Int, completion: @escaping (TodoTask?, String?) -> Void)
+    func addTask(_ task: TodoTask, completion: @escaping (Bool, String?) -> Void)
 }
 
 class TaskListInteractor: TaskListInteractorInputProtocol {
-    var taskList = [
-        Task(title: "Task 1", description: "Description 1", isCompleted: false),
-        Task(title: "Task 2", description: "Description 2", isCompleted: true, completionDate: .now),
-        Task(title: "Task 3", description: "Description 3", isCompleted: false)
+    private var taskList = [
+        TodoTask(id: "id1", title: "Task 1", description: "Description 1", isCompleted: false),
+        TodoTask(id: "id2", title: "Task 2", description: "Description 2", isCompleted: true, completionDate: .now),
+        TodoTask(id: "id3", title: "Task 3", description: "Description 3", isCompleted: false)
     ]
     
-    func fetchTaskList() -> [Task] {
-        return taskList
+    func fetchTaskList(completion: @escaping ([TodoTask]?, String?) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            guard let self else { return }
+            completion(self.taskList, nil)
+        }
     }
     
-    func addTask(_ task: Task) {
-        taskList.append(task)
+    
+    func addTask(_ task: TodoTask, completion: @escaping (Bool, String?) -> Void) {
+        //Simulate 2 seconds load
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {[weak self] in
+            //suppose there is api operation here, then
+            self?.taskList.append(task)
+            completion(true, nil)
+            //if API fail
+            //completion(false, "Error message")
+        }
+        
     }
     
-    func fetchTask(withId id: Int) -> Task {
-        return taskList[id]
+    func fetchTask(withId id: Int, completion: @escaping (TodoTask?, String?) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self else { return }
+            completion(self.taskList[id], nil)
+        }
     }
 }
