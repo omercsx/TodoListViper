@@ -8,9 +8,9 @@
 import UIKit
 
 class TaskDetailViewController: UIViewController {
-    let task: Task
+    let task: TodoTask
     
-    init(task: Task) {
+    init(task: TodoTask) {
         self.task = task
         super.init(nibName: nil, bundle: nil)
     }

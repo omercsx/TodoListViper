@@ -1,6 +1,13 @@
+//
+//  ButtonCell.swift
+//  TodoListViper
+//
+//  Created by Mostafa Gamal on 2024-12-06.
+//
+
 import UIKit
 
-class TaskCell: UICollectionViewCell {
+class ButtonCell: UICollectionViewCell, CollectionViewCellProtocol {
     static let identifier = "TaskCell"
 
     private let titleLabel: UILabel = {
@@ -63,7 +70,7 @@ class TaskCell: UICollectionViewCell {
         ])
     }
 
-    func configure(with task: Task) {
+    func configure(with task: TodoTask) {
         titleLabel.text = task.title
         checkmarkImageView.image =
             task.isCompleted
