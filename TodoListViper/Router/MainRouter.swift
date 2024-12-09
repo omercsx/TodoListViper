@@ -17,14 +17,16 @@ protocol MainRouterProtocol {
 class MainRouter: MainRouterProtocol {
     private let appRoot: UIWindow
     private let navigationController: UINavigationController
-    
+    private let tabBarController: UITabBarController
+
     init(appRoot: UIWindow) {
         self.appRoot = appRoot
-        self.navigationController = UINavigationController()
+        navigationController = UINavigationController()
+        tabBarController = MainTabBarController()
         self.appRoot.rootViewController = navigationController
         self.appRoot.makeKeyAndVisible()
     }
-    
+
     func start() {
         if UserDefaults.standard.bool(forKey: "isLoggedIn") {
             loginSuccess()
@@ -35,19 +37,33 @@ class MainRouter: MainRouterProtocol {
             navigationController.setViewControllers([vc], animated: false)
         }
     }
-    
+
     func loginSuccess() {
-        let presenter = TaskListPresenter(router: self)
-        let taskListVC = presenter.getViewController()
-        
-        navigationController.pushViewController(taskListVC, animated: true)
+        // Create Home Tab (TaskList)
+        let taskListPresenter = TaskListPresenter(router: self)
+        let taskListVC = taskListPresenter.getViewController()
+        let homeNav = UINavigationController(rootViewController: taskListVC)
+        homeNav.tabBarItem = UITabBarItem(title: "Home",
+                                          image: UIImage(systemName: "house"),
+                                          selectedImage: UIImage(systemName: "house.fill"))
+
+        // Create Settings Tab
+        let settingsVC = SettingsViewController()
+        let settingsNav = UINavigationController(rootViewController: settingsVC)
+        settingsNav.tabBarItem = UITabBarItem(title: "Settings",
+                                              image: UIImage(systemName: "gear"),
+                                              selectedImage: UIImage(systemName: "gear.fill"))
+
+        // Setup TabBar
+        tabBarController.setViewControllers([homeNav, settingsNav], animated: false)
+        navigationController.setViewControllers([tabBarController], animated: true)
     }
-    
+
     func logout() {
         UserDefaults.standard.removeObject(forKey: "isLoggedIn")
         start()
     }
-    
+
     func goToDetail(of task: TodoTask) {
         navigationController.pushViewController(TaskDetailViewController(task: task), animated: true)
     }
