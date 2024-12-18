@@ -48,7 +48,7 @@ class MainRouter: MainRouterProtocol {
                                           selectedImage: UIImage(systemName: "house.fill"))
 
         // Create Settings Tab
-        let settingsVC = SettingsViewController()
+        let settingsVC = SettingsRouter.createModule(mainRouter: self)
         let settingsNav = UINavigationController(rootViewController: settingsVC)
         settingsNav.tabBarItem = UITabBarItem(title: "Settings",
                                               image: UIImage(systemName: "gear"),
