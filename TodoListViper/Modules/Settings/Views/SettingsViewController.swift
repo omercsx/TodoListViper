@@ -15,12 +15,19 @@ class SettingsViewController: UIViewController {
     private var presenter: SettingsPresenterProtocol?
     private var dataSource: DataSourceManaging?
     
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SettingsCell")
-        return tableView
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 12
+        layout.minimumInteritemSpacing = 12
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .systemGroupedBackground
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(SettingsCell.self, forCellWithReuseIdentifier: SettingsCell.identifier)
+        return collectionView
     }()
     
     init(presenter: SettingsPresenterProtocol) {
@@ -40,15 +47,14 @@ class SettingsViewController: UIViewController {
     
     private func setupUI() {
         title = "Settings"
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemGroupedBackground
         
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(collectionView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
@@ -57,52 +63,48 @@ extension SettingsViewController: SettingsViewProtocol {
     func configureWithDataSource(_ dataSource: DataSourceManaging?) {
         self.dataSource = dataSource
         (self.dataSource as? SettingsDataSource)?.delegate = self
-        tableView.reloadData()
+        collectionView.reloadData()
     }
 }
 
-extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension SettingsViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource?.numItems ?? 0
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsCell", for: indexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SettingsCell.identifier, for: indexPath) as? SettingsCell,
+              let item = dataSource?.itemAt(index: indexPath.row) as? SettingsItem else {
+            return UICollectionViewCell()
+        }
         
-        if let item = dataSource?.itemAt(index: indexPath.row) as? SettingsItem {
-            cell.textLabel?.text = item.title
-            
-            switch item.type {
-            case .darkMode:
-                let switchView = UISwitch()
-                switchView.isOn = item.isDarkMode ?? false
-                switchView.addTarget(self, action: #selector(darkModeSwitchChanged(_:)), for: .valueChanged)
-                cell.accessoryView = switchView
-                cell.selectionStyle = .none
-            case .logout:
-                cell.accessoryType = .disclosureIndicator
+        cell.configure(with: item)
+        cell.switchValueChanged = { [weak self] isOn in
+            if item.type == .darkMode {
+                self?.presenter?.didToggleDarkMode(isOn: isOn)
             }
         }
         
         return cell
     }
+}
+
+extension SettingsViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.bounds.width - 32 // Accounting for left and right insets
+        return CGSize(width: width, height: 60)
+    }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let item = dataSource?.itemAt(index: indexPath.row) as? SettingsItem,
            item.type == .logout {
             presenter?.didTapLogout()
         }
     }
-    
-    @objc private func darkModeSwitchChanged(_ sender: UISwitch) {
-        presenter?.didToggleDarkMode(isOn: sender.isOn)
-    }
 }
 
 extension SettingsViewController: DataSourceManagingDelegate {
     func didLoadData() {
-        tableView.reloadData()
+        collectionView.reloadData()
     }
 }
